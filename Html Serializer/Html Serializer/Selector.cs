@@ -17,27 +17,44 @@ namespace Html_Serializer
         {
             Selector current = new Selector();
             int j = 0;
-            if (Char.IsLetter(level[0]))
+
+            // Check if the level is not empty
+            if (!string.IsNullOrEmpty(level) && Char.IsLetter(level[0]))
             {
-                while (Char.IsLetter(level[j++]));
-                string name = level.Substring(0, j-1);
-                if(HtmlHelper.Instance.HtmlTags.Contains(name))
+                while (j < level.Length && Char.IsLetter(level[j]))
+                {
+                    j++;
+                }
+                string name = level.Substring(0, j);
+                if (HtmlHelper.Instance.HtmlTags.Contains(name))
+                {
                     current.TagName = name;
+                }
             }
-            var attributes = level.Substring(j).Split('.');
+
+            // Splitting attributes
+            var attributes = level.Substring(j).Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             for (int k = 0; k < attributes.Length; k++)
             {
-                if (!attributes[k].Contains('#'))
-                    current.Classes.Add(attributes[k]);
+                if (attributes[k].Contains('#'))
+                {
+                    var idParts = attributes[k].Split('#');
+                    if (idParts.Length > 1)
+                    {
+                        if (!String.IsNullOrEmpty(idParts[0]))
+                        {
+                            current.Classes.Add(idParts[0]);
+                        }
+                        current.Id = idParts[1];
+                    }
+                    else
+                    {
+                        current.Id = idParts[0];
+                    }
+                }
                 else
                 {
-                    var id = attributes[k].Split('#');
-                    if (id.Length > 1)
-                    {
-                        current.Classes.Add(id[0]);
-                        current.Id = id[1];
-                    }
-                    else current.Id = id[0];
+                    current.Classes.Add(attributes[k]);
                 }
             }
             return current;

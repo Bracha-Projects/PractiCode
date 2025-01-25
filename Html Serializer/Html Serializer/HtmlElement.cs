@@ -45,9 +45,12 @@ namespace Html_Serializer
         private bool IsEqual(Selector other)
         {
             if(other == null) return false;
-            if(other.Id != this.Id) return false;
-            if(other.Classes.Equals(this.Classes)) return false;
-            if(other.TagName != this.Name) return false;
+            if(!String.IsNullOrEmpty(other.Id))
+                if(other.Id != this.Id) return false;
+            if(other.Classes!=null)
+                if(!other.Classes.All(item => this.Classes.Contains(item))) return false;
+            if(!String.IsNullOrEmpty(other.TagName))
+                if(other.TagName != this.Name) return false;
             return true;    
         }
         private void FilteredList(Selector selector,HtmlElement element,HashSet<HtmlElement> results)

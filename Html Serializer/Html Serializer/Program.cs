@@ -64,6 +64,8 @@ for (int i = 2; i < htmlLines.Count(); i++)
     }
     else if (firstWord[0] == '/' && current != null)
     {
+        if (current.Parent != null)
+            current.Parent.InnerHtml += current.InnerHtml;
         current = current.Parent;
     }
     else if(current != null)
@@ -71,10 +73,13 @@ for (int i = 2; i < htmlLines.Count(); i++)
         current.InnerHtml += htmlLines[i];
     }
 }
-
-foreach (var item in root.FilteredList("div.popup")) 
+var results = root.FilteredList("div.popup a");
+foreach (var item in results) 
 {
-    Console.WriteLine(item.Name +" " + item.Classes);
+    Console.WriteLine(item.Name);
+    item.Classes.ForEach(Console.WriteLine);
 }
+Console.WriteLine("The count is: " + results.Count());
+
 
 
